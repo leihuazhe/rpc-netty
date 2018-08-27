@@ -55,10 +55,6 @@ public class RpcClientHandler extends ChannelInboundHandlerAdapter {
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         logger.warn("channel掉线了,channel: {}", ctx.channel().id());
         //使用过程中断线重连
-       /* final EventLoop eventLoop = ctx.channel().eventLoop();
-        eventLoop.schedule((Runnable) () -> {
-            imConnection.connect(ImClientApp.HOST, ImClientApp.PORT);
-        }, 1L, TimeUnit.SECONDS);*/
         super.channelInactive(ctx);
     }
 
