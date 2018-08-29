@@ -31,6 +31,7 @@ public class SoaLinkStateHandler extends ChannelDuplexHandler {
             int length = pros.readInt();
             if (length == 0) {
                 logger.info("来自客户端的心跳连接. msg:{}", length);
+                ctx.writeAndFlush(ctx.alloc().buffer(1).writeInt(0));
                 return;
             }
         } finally {
@@ -50,6 +51,9 @@ public class SoaLinkStateHandler extends ChannelDuplexHandler {
                 logger.info(getClass().getName() + "::读超时，关闭连接:" + ctx.channel());
 
             } else if (e.state() == IdleState.WRITER_IDLE) {
+
+                logger.info(getClass().getName() + "::写超时，发送心跳包:" + ctx.channel());
+
                 ctx.writeAndFlush(ctx.alloc().buffer(1).writeInt(0));
 
                 if (logger.isDebugEnabled()) {

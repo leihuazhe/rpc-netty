@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 2018年08月26日 下午11:48
  */
 public class AppClient {
-    private static Logger logger = LoggerFactory.getLogger(AppClient.class);
+    private static final Logger logger = LoggerFactory.getLogger(AppClient.class);
     private Channel channel;
     private NettyClient nettyClient;
     private final String host;
@@ -40,7 +40,7 @@ public class AppClient {
         RpcObject rpcObject = new RpcObject(seq, message);
         try {
             checkChannel();
-            CompletableFuture<RpcObject> resp = nettyClient.sendAsync(channel, seq, rpcObject, 2000L);
+            CompletableFuture<RpcObject> resp = nettyClient.sendAsync(channel, seq, rpcObject, 5000L);
             return resp;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -72,16 +72,25 @@ public class AppClient {
         AppClient client = new AppClient("127.0.0.1", 8000);
         logger.info("请输入内容:\n");
         while (true) {
-            Scanner scanner = new Scanner(System.in);
-            String msg = scanner.next();
-            int seq = seqidAtomic.incrementAndGet();
-            CompletableFuture<RpcObject> response = client.sendMessage(seq, msg);
-            response.whenComplete((result, ex) -> {
-                if (ex != null) {
-                    logger.info(ex.getMessage(), ex);
+            try {
+                Scanner scanner = new Scanner(System.in);
+                if (scanner.hasNext()) {
+                    String msg = scanner.next();
+                    int seq = seqidAtomic.incrementAndGet();
+                    CompletableFuture<RpcObject> response = client.sendMessage(seq, msg);
+                    response.whenComplete((result, ex) -> {
+                        if (ex != null) {
+                            logger.info(ex.getMessage(), ex);
+                        }
+                        logger.info("seq为 {} 的请求,服务端返回结果为:{}", seq, result.toString());
+                    });
+                } else {
                 }
-                logger.info("seq为 {} 的请求,服务端返回结果为:{}", seq, result.toString());
-            });
+
+
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
         }
     }
 }

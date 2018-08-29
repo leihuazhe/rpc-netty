@@ -5,6 +5,7 @@ import com.maple.demo3.client.handler.ClientLogHandler;
 import com.maple.demo3.client.handler.RpcClientHandler;
 import com.maple.demo3.client.handler.SoaIdleHandler;
 import com.maple.demo3.entity.RpcObject;
+import com.maple.util.Constants;
 import com.maple.util.RpcException;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.AbstractByteBufAllocator;
@@ -16,11 +17,13 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.timeout.IdleStateHandler;
+import io.netty.util.concurrent.DefaultThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.concurrent.*;
+
 
 /**
  * @author maple 2018.08.26 22:13
@@ -31,9 +34,8 @@ public class NettyClient {
 
     private final Gson gson = new Gson();
 
-
     private Bootstrap bootstrap = null;
-    private final EventLoopGroup workerGroup = new NioEventLoopGroup(1);
+    private final EventLoopGroup workerGroup = new NioEventLoopGroup(Constants.DEFAULT_IO_THREADS, new DefaultThreadFactory("netty-client-work-group", Boolean.TRUE));
 
     private static class RequestQueue {
         private static class AsyncRequestWithTimeout {
@@ -108,13 +110,19 @@ public class NettyClient {
         bootstrap = new Bootstrap();
         bootstrap.group(workerGroup);
         bootstrap.channel(NioSocketChannel.class);
-        bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
-        bootstrap.option(ChannelOption.ALLOCATOR, allocator);
+
+        //保持连接（可以不写，默认为true）
+        bootstrap.option(ChannelOption.SO_KEEPALIVE, true)
+                .option(ChannelOption.ALLOCATOR, allocator)
+                //禁用nagle算法,有消息立即发送
+                .option(ChannelOption.TCP_NODELAY, true);
+
+
         bootstrap.handler(new ChannelInitializer<SocketChannel>() {
             @Override
             public void initChannel(SocketChannel ch) throws Exception {
                 ChannelPipeline p = ch.pipeline();
-                p.addLast(new IdleStateHandler(45, 15, 0));
+                p.addLast(new IdleStateHandler(25, 15, 0));
                 //SoaIdleHandler中增加userEventTriggered用来接收心跳检测结果,
                 // event.state()的状态分别对应上面三个参数的时间设置，当满足某个时间的条件时会触发事件。
                 p.addLast(new SoaIdleHandler());
@@ -158,7 +166,10 @@ public class NettyClient {
     public CompletableFuture<RpcObject> sendAsync(Channel channel, int seqid, RpcObject request, long timeout) throws Exception {
         String reqStr = gson.toJson(request);
         //不打日志吗？
+
+//        Promise<DubboMeshProto.AgentResponse> promise = new DefaultPromise<>();
         CompletableFuture<RpcObject> future = new CompletableFuture<>();
+
 
         RequestQueue.putAsync(seqid, future, timeout);
 
@@ -171,6 +182,7 @@ public class NettyClient {
         CompletableFuture<RpcObject> future = RequestQueue.remove(msg.getSeqId());
         if (future != null) {
             future.complete(msg);
+            logger.info("完成 msg");
         } else {
             logger.error("返回结果超时，siqid为：" + msg.getSeqId());
         }
@@ -218,7 +230,6 @@ public class NettyClient {
         logger.warn("NettyClient shutdown gracefully");
         workerGroup.shutdownGracefully();
     }
-
 
 
 }
