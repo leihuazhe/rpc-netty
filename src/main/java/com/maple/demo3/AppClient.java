@@ -1,13 +1,14 @@
 package com.maple.demo3;
 
+import com.google.protobuf.ByteString;
 import com.maple.demo3.client.NettyClient;
-import com.maple.demo3.entity.RpcObject;
+import com.maple.protobuf.RpcObjectOut;
 import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Scanner;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -36,11 +37,18 @@ public class AppClient {
         }
     }
 
-    public CompletableFuture<RpcObject> sendMessage(int seq, String message) {
-        RpcObject rpcObject = new RpcObject(seq, message);
+    public CompletableFuture<RpcObjectOut.RpcObject> sendMessage(int seq, String message) {
+        RpcObjectOut.RpcObject.Builder builder = RpcObjectOut.RpcObject.newBuilder();
+        builder.setSeqId(seq);
+
+        builder.setMessage(message);
+
+        RpcObjectOut.RpcObject rpcObject = builder.build();
+
+
         try {
             checkChannel();
-            CompletableFuture<RpcObject> resp = nettyClient.sendAsync(channel, seq, rpcObject, 5000L);
+            CompletableFuture<RpcObjectOut.RpcObject> resp = nettyClient.sendAsync(channel, seq, rpcObject, 5000L);
             return resp;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -67,7 +75,6 @@ public class AppClient {
         }
     }
 
-
     public static void main(String[] args) {
         AppClient client = new AppClient("127.0.0.1", 8000);
         logger.info("请输入内容:\n");
@@ -77,12 +84,12 @@ public class AppClient {
                 if (scanner.hasNext()) {
                     String msg = scanner.next();
                     int seq = seqidAtomic.incrementAndGet();
-                    CompletableFuture<RpcObject> response = client.sendMessage(seq, msg);
+                    CompletableFuture<RpcObjectOut.RpcObject> response = client.sendMessage(seq, msg);
                     response.whenComplete((result, ex) -> {
                         if (ex != null) {
                             logger.info(ex.getMessage(), ex);
                         }
-                        logger.info("seq为 {} 的请求,服务端返回结果为:{}", seq, result.toString());
+                        logger.info("seq为 {} 的请求,服务端返回结果为:{}", seq, result.getMessage());
                     });
                 } else {
                 }

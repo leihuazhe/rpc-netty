@@ -1,10 +1,9 @@
 package com.maple.demo3.client.handler;
 
 import com.google.gson.Gson;
-import com.maple.demo3.entity.RpcObject;
+import com.maple.protobuf.RpcObjectOut;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.EventLoop;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +19,7 @@ public class RpcClientHandler extends ChannelInboundHandlerAdapter {
     private CallBack callBack;
 
     public interface CallBack {
-        void onSuccess(RpcObject msg) throws ExecutionException, InterruptedException;
+        void onSuccess(RpcObjectOut.RpcObject msg) throws ExecutionException, InterruptedException;
     }
 
     public RpcClientHandler(CallBack callBack) {
@@ -34,7 +33,7 @@ public class RpcClientHandler extends ChannelInboundHandlerAdapter {
             logger.info("来自服务端的心跳响应!!!");
             return;
         }
-        RpcObject response = gson.fromJson((String) msg, RpcObject.class);
+        RpcObjectOut.RpcObject response = (RpcObjectOut.RpcObject) msg;
         if (callBack != null)
             try {
                 callBack.onSuccess(response);

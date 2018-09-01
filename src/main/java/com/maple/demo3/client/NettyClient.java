@@ -1,10 +1,9 @@
 package com.maple.demo3.client;
 
-import com.google.gson.Gson;
 import com.maple.demo3.client.handler.ClientLogHandler;
 import com.maple.demo3.client.handler.RpcClientHandler;
 import com.maple.demo3.client.handler.SoaIdleHandler;
-import com.maple.demo3.entity.RpcObject;
+import com.maple.protobuf.RpcObjectOut;
 import com.maple.util.Constants;
 import com.maple.util.RpcException;
 import io.netty.bootstrap.Bootstrap;
@@ -14,8 +13,10 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
+import io.netty.handler.codec.protobuf.ProtobufDecoder;
+import io.netty.handler.codec.protobuf.ProtobufEncoder;
+import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
+import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import org.slf4j.Logger;
@@ -32,7 +33,6 @@ public class NettyClient {
 
     private static final Logger logger = LoggerFactory.getLogger(NettyClient.class);
 
-    private final Gson gson = new Gson();
 
     private Bootstrap bootstrap = null;
     private final EventLoopGroup workerGroup = new NioEventLoopGroup(Constants.DEFAULT_IO_THREADS, new DefaultThreadFactory("netty-client-work-group", Boolean.TRUE));
@@ -50,24 +50,24 @@ public class NettyClient {
             final CompletableFuture<?> future;
         }
 
-        private static final Map<Integer, CompletableFuture<RpcObject>> FUTURE_CACHES =
+        private static final Map<Integer, CompletableFuture<RpcObjectOut.RpcObject>> FUTURE_CACHES =
                 new ConcurrentHashMap<>();
         private static final PriorityBlockingQueue<AsyncRequestWithTimeout> FUTURES_CACHES_WITH_TIMEOUT =
                 new PriorityBlockingQueue<>(256,
                         (o1, o2) -> (int) (o1.expired - o2.expired));
 
-        static void put(int seqId, CompletableFuture<RpcObject> requestFuture) {
+        static void put(int seqId, CompletableFuture<RpcObjectOut.RpcObject> requestFuture) {
             FUTURE_CACHES.put(seqId, requestFuture);
         }
 
-        static void putAsync(int seqId, CompletableFuture<RpcObject> requestFuture, long timeout) {
+        static void putAsync(int seqId, CompletableFuture<RpcObjectOut.RpcObject> requestFuture, long timeout) {
             FUTURE_CACHES.put(seqId, requestFuture);
 
             AsyncRequestWithTimeout fwt = new AsyncRequestWithTimeout(seqId, timeout, requestFuture);
             FUTURES_CACHES_WITH_TIMEOUT.add(fwt);
         }
 
-        static CompletableFuture<RpcObject> remove(int seqId) {
+        static CompletableFuture<RpcObjectOut.RpcObject> remove(int seqId) {
             return FUTURE_CACHES.remove(seqId);
             // remove from prior-queue
         }
@@ -126,8 +126,20 @@ public class NettyClient {
                 //SoaIdleHandler中增加userEventTriggered用来接收心跳检测结果,
                 // event.state()的状态分别对应上面三个参数的时间设置，当满足某个时间的条件时会触发事件。
                 p.addLast(new SoaIdleHandler());
-                p.addLast("decoder", new StringDecoder());
-                p.addLast("encoder", new StringEncoder());
+
+                // ---- protobuf 处理器，这里的配置是关键----
+                /**
+                 * 用于decode前解决半包和粘包问题（利用包头中的包含数组长度来识别半包粘包）
+                 */
+                ch.pipeline().addLast("frameDecoder", new ProtobufVarint32FrameDecoder());
+                //配置Protobuf解码处理器，消息接收到了就会自动解码，ProtobufDecoder是netty自带的，Hello 是自己定义的Protobuf类
+                ch.pipeline().addLast("protobufDecoder", new ProtobufDecoder(RpcObjectOut.RpcObject.getDefaultInstance()));
+
+                // 用于在序列化的字节数组前加上一个简单的包头，只包含序列化的字节长度。
+                ch.pipeline().addLast("frameEncoder", new ProtobufVarint32LengthFieldPrepender());
+                //配置Protobuf编码器，发送的消息会先经过编码
+                ch.pipeline().addLast("protobufEncoder", new ProtobufEncoder());
+
                 p.addLast(new ClientLogHandler());
                 p.addLast(new RpcClientHandler(callBack));
             }
@@ -140,9 +152,9 @@ public class NettyClient {
      * 处理器链中会有一个 RpcClientHandler,当收到channelRead，即服务端返回后，这里便会回调下面的callback.
      * 读出返回的信息中的seqId，判断是哪一次请求，然后完成这一次请求。客服端即可返回。
      */
-    public RpcObject send(Channel channel, int seqid, RpcObject request, long timeout, String service) throws RpcException {
+    public RpcObjectOut.RpcObject send(Channel channel, int seqid, RpcObjectOut.RpcObject request, long timeout, String service) throws RpcException {
         // send 即 put
-        CompletableFuture<RpcObject> future = new CompletableFuture<>();
+        CompletableFuture<RpcObjectOut.RpcObject> future = new CompletableFuture<>();
 
         RequestQueue.put(seqid, future);
 
@@ -163,23 +175,22 @@ public class NettyClient {
         }
     }
 
-    public CompletableFuture<RpcObject> sendAsync(Channel channel, int seqid, RpcObject request, long timeout) throws Exception {
-        String reqStr = gson.toJson(request);
+    public CompletableFuture<RpcObjectOut.RpcObject> sendAsync(Channel channel, int seqid, RpcObjectOut.RpcObject request, long timeout) throws Exception {
         //不打日志吗？
 
 //        Promise<DubboMeshProto.AgentResponse> promise = new DefaultPromise<>();
-        CompletableFuture<RpcObject> future = new CompletableFuture<>();
+        CompletableFuture<RpcObjectOut.RpcObject> future = new CompletableFuture<>();
 
 
         RequestQueue.putAsync(seqid, future, timeout);
 
-        channel.writeAndFlush(reqStr);
+        channel.writeAndFlush(request);
 
         return future;
     }
 
     private RpcClientHandler.CallBack callBack = msg -> {
-        CompletableFuture<RpcObject> future = RequestQueue.remove(msg.getSeqId());
+        CompletableFuture<RpcObjectOut.RpcObject> future = RequestQueue.remove(msg.getSeqId());
         if (future != null) {
             future.complete(msg);
             logger.info("完成 msg");

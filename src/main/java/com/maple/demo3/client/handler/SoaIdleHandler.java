@@ -26,7 +26,7 @@ public class SoaIdleHandler extends ChannelInboundHandlerAdapter {
         try {
             int length = pros.readInt();
             if (length == 0) {
-                logger.info("来自服务端的心跳连接. msg:{}", length);
+//                logger.info("来自服务端的心跳连接. msg:{}", length);
                 return;
             }
         } finally {

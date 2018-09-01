@@ -33,7 +33,7 @@ public class ClientLogHandler extends ChannelInboundHandlerAdapter {
             logger.info("channelRead attributeMap 中是有值的");
             logger.info(nChannel.getName() + "=======" + nChannel.getCreateDate());
         }
-        logger.info("ClientLogHandler read Message:   " + msg);
+//        logger.info("ClientLogHandler read Message:   " + msg);
 
 
         ChannelHandler handler = ctx.handler();
