@@ -1,4 +1,4 @@
-package com.maple.demo3.server.handler;
+package com.maple.demo.server.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;

@@ -1,7 +1,7 @@
-package com.maple.demo3;
+package com.maple.demo;
 
-import com.maple.demo3.client.NettyClient;
-import com.maple.demo3.entity.RpcObject;
+import com.maple.demo.client.NettyClient;
+import com.maple.demo.entity.RpcObject;
 import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

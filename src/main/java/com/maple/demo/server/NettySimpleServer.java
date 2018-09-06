@@ -1,8 +1,8 @@
-package com.maple.demo3.server;
+package com.maple.demo.server;
 
-import com.maple.demo3.server.handler.ServerHandler;
-import com.maple.demo3.server.handler.SoaLinkStateHandler;
-import com.maple.util.Constants;
+import com.maple.demo.server.handler.ServerHandler;
+import com.maple.demo.server.handler.SoaLinkStateHandler;
+import com.maple.demo.util.Constants;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelFuture;

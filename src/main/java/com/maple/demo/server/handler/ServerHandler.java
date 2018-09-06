@@ -1,7 +1,7 @@
-package com.maple.demo3.server.handler;
+package com.maple.demo.server.handler;
 
 import com.google.gson.Gson;
-import com.maple.demo3.entity.RpcObject;
+import com.maple.demo.entity.RpcObject;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.slf4j.Logger;

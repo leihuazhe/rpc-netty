@@ -1,4 +1,4 @@
-package com.maple.demo3.client;
+package com.maple.demo.client;
 
 import java.util.Date;
 

@@ -1,7 +1,7 @@
-package com.maple.demo3.client.handler;
+package com.maple.demo.client.handler;
 
-import com.maple.demo3.client.NettyChannel;
-import com.maple.demo3.server.AttributeMapConstant;
+import com.maple.demo.client.NettyChannel;
+import com.maple.demo.server.AttributeMapConstant;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;

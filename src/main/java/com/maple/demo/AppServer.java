@@ -1,7 +1,7 @@
-package com.maple.demo3;
+package com.maple.demo;
 
 
-import com.maple.demo3.server.NettySimpleServer;
+import com.maple.demo.server.NettySimpleServer;
 
 /**
  * desc: AppServer

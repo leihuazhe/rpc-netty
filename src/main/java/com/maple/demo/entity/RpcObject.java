@@ -1,4 +1,4 @@
-package com.maple.demo3.entity;
+package com.maple.demo.entity;
 
 /**
  * desc: RpcObject

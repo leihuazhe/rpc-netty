@@ -1,6 +1,6 @@
-package com.maple.demo3.server;
+package com.maple.demo.server;
 
-import com.maple.demo3.client.NettyChannel;
+import com.maple.demo.client.NettyChannel;
 import io.netty.util.AttributeKey;
 
 /**

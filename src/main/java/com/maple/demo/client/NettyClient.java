@@ -1,12 +1,12 @@
-package com.maple.demo3.client;
+package com.maple.demo.client;
 
 import com.google.gson.Gson;
-import com.maple.demo3.client.handler.ClientLogHandler;
-import com.maple.demo3.client.handler.RpcClientHandler;
-import com.maple.demo3.client.handler.SoaIdleHandler;
-import com.maple.demo3.entity.RpcObject;
-import com.maple.util.Constants;
-import com.maple.util.RpcException;
+import com.maple.demo.client.handler.ClientLogHandler;
+import com.maple.demo.client.handler.RpcClientHandler;
+import com.maple.demo.client.handler.SoaIdleHandler;
+import com.maple.demo.entity.RpcObject;
+import com.maple.demo.util.Constants;
+import com.maple.demo.util.RpcException;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.AbstractByteBufAllocator;
 import io.netty.buffer.PooledByteBufAllocator;

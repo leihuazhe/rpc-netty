@@ -1,4 +1,4 @@
-package com.maple.util;
+package com.maple.demo.util;
 
 /**
  * desc: Constants
