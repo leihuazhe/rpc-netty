@@ -20,36 +20,37 @@ import static io.netty.channel.ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE;
 /**
  * @author maple 2018.09.07 上午9:40
  */
-public class RpcMsgDecoder extends MessageToMessageDecoder<ByteBuf> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RpcMsgDecoder.class);
+public class RpcClientMsgDecoder extends MessageToMessageDecoder<ByteBuf> {
+    private static final Logger logger = LoggerFactory.getLogger(RpcClientMsgDecoder.class);
 
     private Gson gson = new Gson();
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
         try {
-            if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace(getClass().getSimpleName() + "::decode");
-            }
             int readable = msg.readableBytes();
 
             byte stx = msg.readByte();
             // 通讯协议不正确
             if (stx != STX) {
-                throw new RpcException("Err-Rpc-001", "通讯协议不正确(起始符)");
+                ctx.close();
+                logger.error(getClass().getSimpleName() + "::decode:通讯包起始符异常, 连接关闭");
+                return;
             }
 
             byte etx = msg.getByte(readable - 1);
             // 通讯协议不正确
             if (etx != ETX) {
-                throw new RpcException("Err-Rpc-002", "通讯协议不正确(结束符)");
+                ctx.close();
+                logger.error(getClass().getSimpleName() + "::decode:通讯包结束符异常, 连接关闭");
+                return;
             }
 
             // 为什么这里是 -2
             String result = msg.readBytes(readable - 2).toString(Charset.forName("UTF-8"));
             out.add(gson.fromJson(result, RpcObject.class));
         } catch (RpcException e) {
-            LOGGER.error(e.getMessage(), e);
+            logger.error(e.getMessage(), e);
             RpcObject rpcObject = new RpcObject(9999, e.getMessage());
 
             ctx.writeAndFlush(rpcObject).addListener(FIRE_EXCEPTION_ON_FAILURE);

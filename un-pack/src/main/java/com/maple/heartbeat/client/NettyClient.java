@@ -2,6 +2,9 @@ package com.maple.heartbeat.client;
 
 import com.google.gson.Gson;
 import com.maple.heartbeat.client.handler.*;
+import com.maple.heartbeat.common.handler.RpcFrameDecoder;
+import com.maple.heartbeat.server.handler.RpcMsgDecoder;
+import com.maple.heartbeat.server.handler.RpcMsgEncoder;
 import com.maple.heartbeat.entity.RpcObject;
 import com.maple.rpc.common.util.Constants;
 import com.maple.rpc.common.util.RpcException;
@@ -12,9 +15,6 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
-import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,8 +121,8 @@ public class NettyClient {
             public void initChannel(SocketChannel ch) throws Exception {
                 ChannelPipeline p = ch.pipeline();
                 p.addLast("frameDecoder", new RpcFrameDecoder());
-                p.addLast("encoder", new RpcMsgEncoder());
-                p.addLast("decoder", new RpcMsgDecoder());
+                p.addLast("encoder", new RpcClientMsgEncoder());
+                p.addLast("decoder", new RpcClientMsgDecoder());
                 p.addLast(new RpcClientHandler(callBack));
             }
         });

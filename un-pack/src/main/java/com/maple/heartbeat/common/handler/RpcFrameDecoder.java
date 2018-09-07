@@ -1,4 +1,4 @@
-package com.maple.heartbeat.client.handler;
+package com.maple.heartbeat.common.handler;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -28,7 +28,7 @@ public class RpcFrameDecoder extends LengthFieldBasedFrameDecoder {
      */
     private static final int LENGTH_FIELD_LENGTH = 4;
     /**
-     * 解析的时候需要跳过的字节数
+     * 解析的时候需要跳过的字节数,这里解析后跳过长度的字节 int 4字节
      */
     private static final int INITIAL_BYTES_TO_STRIP = 4;
 

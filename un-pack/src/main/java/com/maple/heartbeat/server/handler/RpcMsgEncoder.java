@@ -1,4 +1,4 @@
-package com.maple.heartbeat.client.handler;
+package com.maple.heartbeat.server.handler;
 
 import com.google.gson.Gson;
 import com.maple.heartbeat.entity.RpcObject;
@@ -22,8 +22,6 @@ import static io.netty.channel.ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE;
  * @author maple 2018.09.07 上午9:40
  */
 public class RpcMsgEncoder extends MessageToByteEncoder<RpcObject> {
-//    private static final Logger LOGGER = LoggerFactory.getLogger(RpcMsgEncoder.class);
-
     private Gson gson = new Gson();
 
     @Override
