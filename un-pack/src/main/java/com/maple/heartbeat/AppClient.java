@@ -85,6 +85,14 @@ public class AppClient {
                         logger.info("seq为 {} 的请求,服务端返回结果为:{}", seq, result.toString());
                     });
                 } else {
+                    int seq = seqidAtomic.incrementAndGet();
+                    CompletableFuture<RpcObject> response = client.sendMessage(seq, "准备关闭:" + seq);
+                    response.whenComplete((result, ex) -> {
+                        if (ex != null) {
+                            logger.info(ex.getMessage(), ex);
+                        }
+                        logger.info("seq为 {} 的请求,服务端返回结果为:{}", seq, result.toString());
+                    });
                 }
 
 

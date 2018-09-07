@@ -28,13 +28,19 @@ public class RpcFrameDecoder extends LengthFieldBasedFrameDecoder {
      */
     private static final int LENGTH_FIELD_LENGTH = 4;
     /**
+     * 解析的时候需要跳过的字节数
+     */
+    private static final int INITIAL_BYTES_TO_STRIP = 4;
+
+
+    /**
      * 为true，当frame长度超过maxFrameLength时立即报TooLongFrameException异常，为false，读取完整个帧再报异常
      */
     private static final boolean FAIL_FAST = true;
 
 
     public RpcFrameDecoder() {
-        super(MAX_FRAME_LENGTH, LENGTH_FIELD_OFFSET, LENGTH_FIELD_LENGTH, 0, 0, FAIL_FAST);
+        super(MAX_FRAME_LENGTH, LENGTH_FIELD_OFFSET, LENGTH_FIELD_LENGTH, 0, INITIAL_BYTES_TO_STRIP, FAIL_FAST);
     }
 
 

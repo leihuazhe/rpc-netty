@@ -35,9 +35,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 
         RpcObject rpcResponse = new RpcObject(request.getSeqId(), "处理成功,返回结果: " + request.getSeqId());
 
-        //注意序列化和编解码
-        String resp = gson.toJson(rpcResponse);
-        ctx.writeAndFlush(resp);
+        ctx.writeAndFlush(rpcResponse);
     }
 
     @Override

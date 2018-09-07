@@ -1,6 +1,7 @@
 package com.maple.heartbeat.server;
 
 import com.maple.heartbeat.client.handler.RpcFrameDecoder;
+import com.maple.heartbeat.client.handler.RpcMsgDecoder;
 import com.maple.heartbeat.client.handler.RpcMsgEncoder;
 import com.maple.heartbeat.server.handler.ServerHandler;
 import com.maple.heartbeat.server.handler.SoaLinkStateHandler;
@@ -53,7 +54,7 @@ public class NettySimpleServer {
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline().addLast("frameDecoder", new RpcFrameDecoder());
                             ch.pipeline().addLast("encoder", new RpcMsgEncoder());
-                            ch.pipeline().addLast("decoder", new RpcMsgEncoder());
+                            ch.pipeline().addLast("decoder", new RpcMsgDecoder());
                             ch.pipeline().addLast(new ServerHandler());
                         }
                     })

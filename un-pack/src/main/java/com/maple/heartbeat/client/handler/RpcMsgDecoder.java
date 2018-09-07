@@ -9,6 +9,7 @@ import io.netty.handler.codec.MessageToMessageDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.charset.Charset;
 import java.util.List;
 
 import static com.maple.heartbeat.util.FrameProtocolUtil.ETX;
@@ -43,7 +44,9 @@ public class RpcMsgDecoder extends MessageToMessageDecoder<ByteBuf> {
             if (etx != ETX) {
                 throw new RpcException("Err-Rpc-002", "通讯协议不正确(结束符)");
             }
-            String result = msg.readBytes(readable - 1).toString();
+
+            // 为什么这里是 -2
+            String result = msg.readBytes(readable - 2).toString(Charset.forName("UTF-8"));
             out.add(gson.fromJson(result, RpcObject.class));
         } catch (RpcException e) {
             LOGGER.error(e.getMessage(), e);

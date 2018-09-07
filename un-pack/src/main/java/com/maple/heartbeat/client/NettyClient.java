@@ -158,16 +158,11 @@ public class NettyClient {
     }
 
     public CompletableFuture<RpcObject> sendAsync(Channel channel, int seqid, RpcObject request, long timeout) throws Exception {
-        String reqStr = gson.toJson(request);
-        //不打日志吗？
-
-//        Promise<DubboMeshProto.AgentResponse> promise = new DefaultPromise<>();
         CompletableFuture<RpcObject> future = new CompletableFuture<>();
-
 
         RequestQueue.putAsync(seqid, future, timeout);
 
-        channel.writeAndFlush(reqStr);
+        channel.writeAndFlush(request);
 
         return future;
     }
