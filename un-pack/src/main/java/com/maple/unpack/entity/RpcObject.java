@@ -1,4 +1,4 @@
-package com.maple.heartbeat.entity;
+package com.maple.unpack.entity;
 
 /**
  * desc: RpcObject

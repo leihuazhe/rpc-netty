@@ -100,7 +100,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.maple.heartbeat.AppServer</mainClass>
+                            <mainClass>com.maple.unpack.AppServer</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
