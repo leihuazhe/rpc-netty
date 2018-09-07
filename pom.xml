@@ -13,6 +13,7 @@
         <module>netty-rpc</module>
         <module>heartbeat</module>
         <module>commons</module>
+        <module>un-pack</module>
     </modules>
 
 
