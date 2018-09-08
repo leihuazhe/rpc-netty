@@ -1,7 +1,7 @@
 package com.maple.unpack.server.handler;
 
 import com.google.gson.Gson;
-import com.maple.unpack.entity.RpcObject;
+import com.maple.unpack.common.entity.RpcObject;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.slf4j.Logger;

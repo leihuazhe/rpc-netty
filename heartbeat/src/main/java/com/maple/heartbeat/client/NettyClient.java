@@ -4,8 +4,8 @@ import com.google.gson.Gson;
 import com.maple.heartbeat.client.handler.RpcClientHandler;
 import com.maple.heartbeat.client.handler.SoaIdleHandler;
 import com.maple.heartbeat.entity.RpcObject;
-import com.maple.heartbeat.util.Constants;
-import com.maple.heartbeat.util.RpcException;
+import com.maple.rpc.common.util.Constants;
+import com.maple.rpc.common.util.RpcException;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.AbstractByteBufAllocator;
 import io.netty.buffer.PooledByteBufAllocator;
@@ -127,7 +127,6 @@ public class NettyClient {
                 p.addLast(new SoaIdleHandler());
                 p.addLast("decoder", new StringDecoder());
                 p.addLast("encoder", new StringEncoder());
-                p.addLast(new ClientLogHandler());
                 p.addLast(new RpcClientHandler(callBack));
             }
         });

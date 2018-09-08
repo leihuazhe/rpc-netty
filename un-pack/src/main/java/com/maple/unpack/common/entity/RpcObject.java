@@ -1,4 +1,4 @@
-package com.maple.unpack.entity;
+package com.maple.unpack.common.entity;
 
 /**
  * desc: RpcObject

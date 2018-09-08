@@ -3,7 +3,7 @@ package com.maple.unpack.client;
 import com.google.gson.Gson;
 import com.maple.unpack.client.handler.*;
 import com.maple.unpack.common.handler.RpcFrameDecoder;
-import com.maple.unpack.entity.RpcObject;
+import com.maple.unpack.common.entity.RpcObject;
 import com.maple.rpc.common.util.Constants;
 import com.maple.rpc.common.util.RpcException;
 import io.netty.bootstrap.Bootstrap;

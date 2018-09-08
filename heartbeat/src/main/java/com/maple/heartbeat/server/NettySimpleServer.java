@@ -2,7 +2,7 @@ package com.maple.heartbeat.server;
 
 import com.maple.heartbeat.server.handler.ServerHandler;
 import com.maple.heartbeat.server.handler.SoaLinkStateHandler;
-import com.maple.heartbeat.util.Constants;
+import com.maple.rpc.common.util.Constants;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelFuture;
