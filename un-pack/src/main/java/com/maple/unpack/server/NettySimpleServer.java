@@ -1,6 +1,7 @@
 package com.maple.unpack.server;
 
 import com.maple.unpack.common.handler.RpcFrameDecoder;
+import com.maple.unpack.server.handler.RpcLogHandler;
 import com.maple.unpack.server.handler.RpcMsgDecoder;
 import com.maple.unpack.server.handler.RpcMsgEncoder;
 import com.maple.unpack.server.handler.ServerHandler;
@@ -48,6 +49,7 @@ public class NettySimpleServer {
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
+                            ch.pipeline().addLast("logHandler", new RpcLogHandler());
                             ch.pipeline().addLast("frameDecoder", new RpcFrameDecoder());
                             ch.pipeline().addLast("encoder", new RpcMsgEncoder());
                             ch.pipeline().addLast("decoder", new RpcMsgDecoder());
