@@ -40,13 +40,14 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        logger.error("[ServerHandler]:" + cause.getMessage(), cause);
+        logger.error("[ServerHandler] exceptionCaught :" + cause.getMessage(), cause);
         ctx.close();
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        logger.info("与客户端的channel断开,channel:" + ctx.channel().id());
+
+        logger.info("与客户端的channel断开,channel: {} ip: {}", ctx.channel().id(), ctx.channel().remoteAddress());
         super.channelInactive(ctx);
     }
 }
