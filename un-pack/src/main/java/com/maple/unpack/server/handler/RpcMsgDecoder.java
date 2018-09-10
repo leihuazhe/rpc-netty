@@ -46,7 +46,23 @@ public class RpcMsgDecoder extends MessageToMessageDecoder<ByteBuf> {
             }
 
             // 为什么这里是 -2
-            String result = msg.readBytes(readable - 2).toString(Charset.forName("UTF-8"));
+            /**
+             * 这一句内存泄漏了 LEAK
+             */
+//            String result = msg.readBytes(readable - 2).toString(Charset.forName("UTF-8"));
+
+
+            ByteBuf resultBuf = null;
+            String result;
+            try {
+                resultBuf = msg.readBytes(readable - 2);
+                result = resultBuf.toString(Charset.forName("UTF-8"));
+
+            } finally {
+                resultBuf.release();
+            }
+
+
             out.add(gson.fromJson(result, RpcObject.class));
         } catch (RpcException e) {
             LOGGER.error(e.getMessage(), e);

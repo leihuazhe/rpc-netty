@@ -16,7 +16,7 @@ public class RpcLogHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        LOGGER.info("Dump消息内容: {}", DumpUtil.dumpToStr((ByteBuf) msg));
+//        LOGGER.info("Dump消息内容: {}", DumpUtil.dumpToStr((ByteBuf) msg));
         super.channelRead(ctx, msg);
     }
 }

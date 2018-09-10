@@ -8,6 +8,7 @@ import com.maple.unpack.server.handler.ServerHandler;
 import com.maple.rpc.common.util.Constants;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
+import io.netty.buffer.UnpooledByteBufAllocator;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -64,7 +65,8 @@ public class NettySimpleServer {
 
                     .childOption(ChannelOption.SO_KEEPALIVE, true)
                     .childOption(ChannelOption.TCP_NODELAY, Boolean.TRUE)
-                    .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
+//                    .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
+                    .childOption(ChannelOption.ALLOCATOR, UnpooledByteBufAllocator.DEFAULT);
 
 
             // 绑定端口，开始接收进来的连接

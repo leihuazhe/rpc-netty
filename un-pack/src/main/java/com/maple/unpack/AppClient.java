@@ -69,8 +69,8 @@ public class AppClient {
 
 
     public static void main(String[] args) {
-//        AppClient client = new AppClient("127.0.0.1", 8000);
-        AppClient client = new AppClient("115.159.41.97", 8000);
+        AppClient client = new AppClient("127.0.0.1", 8000);
+//        AppClient client = new AppClient("115.159.41.97", 8000);
         logger.info("请输入内容:\n");
         while (true) {
             try {
