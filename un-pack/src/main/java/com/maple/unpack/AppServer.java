@@ -15,7 +15,7 @@ public class AppServer {
     public static void main(String[] args) {
         //40M
         System.setProperty("io.netty.maxDirectMemory", "41943040");
-        System.setProperty("io.netty.leakDetectionLevel", "DISABLE");
+//        System.setProperty("io.netty.leakDetectionLevel", "DISABLE");
         NettySimpleServer simpleServer = new NettySimpleServer(8000);
         DirectMemoryReporter reporter = DirectMemoryReporter.getIntance();
         reporter.startReport();
