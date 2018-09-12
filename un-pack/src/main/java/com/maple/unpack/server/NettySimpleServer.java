@@ -65,8 +65,8 @@ public class NettySimpleServer {
 
                     .childOption(ChannelOption.SO_KEEPALIVE, true)
                     .childOption(ChannelOption.TCP_NODELAY, Boolean.TRUE)
-                    .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
-//                    .childOption(ChannelOption.ALLOCATOR, UnpooledByteBufAllocator.DEFAULT);
+//                    .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
+                    .childOption(ChannelOption.ALLOCATOR, UnpooledByteBufAllocator.DEFAULT);
 
 
             // 绑定端口，开始接收进来的连接

@@ -14,6 +14,8 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.DefaultThreadFactory;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -143,7 +145,9 @@ public class NettyClient {
         }
 
         try {
-            channel.writeAndFlush(request);
+            ChannelFuture channelFuture = channel.writeAndFlush(request);
+            logger.info("channelFuture: {}", channelFuture);
+
             return future.get(timeout, TimeUnit.MILLISECONDS);
         } catch (TimeoutException e) {
             logger.error("请求服务超时[" + service + "]，seqid:" + seqid);
@@ -160,7 +164,14 @@ public class NettyClient {
 
         RequestQueue.putAsync(seqid, future, timeout);
 
-        channel.writeAndFlush(request);
+        ChannelPromise channelPromise = (ChannelPromise) channel.writeAndFlush(request);
+
+        channelPromise.addListener(future1 -> {
+            boolean done = future1.isDone();
+            logger.info("isDone: {}, send msg successful !", done);
+        });
+
+        logger.info("channelFuture: {}", channelPromise);
 
         return future;
     }
@@ -168,6 +179,7 @@ public class NettyClient {
     private RpcClientHandler.CallBack callBack = msg -> {
         CompletableFuture<RpcObject> future = RequestQueue.remove(msg.getSeqId());
         if (future != null) {
+            logger.info("callBack future: {}", future);
             future.complete(msg);
             logger.info("完成 msg");
         } else {
