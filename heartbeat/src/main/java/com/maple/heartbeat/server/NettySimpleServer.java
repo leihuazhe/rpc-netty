@@ -55,7 +55,7 @@ public class NettySimpleServer {
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
-                            ch.pipeline().addLast("idleStateHandler", new IdleStateHandler(10, 0, 0));
+                            ch.pipeline().addLast("idleStateHandler", new IdleStateHandler(20, 0, 0));
                             ch.pipeline().addLast("linkStateHandler", new SoaLinkStateHandler());
                             ch.pipeline().addLast("decoder", new StringDecoder());
                             ch.pipeline().addLast("encoder", new StringEncoder());

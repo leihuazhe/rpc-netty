@@ -38,26 +38,23 @@ public class SoaIdleHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-
+        // IdleStateHandler(25, 15, 0));
+        //读超时 25s， 写超时 15s
         if (evt instanceof IdleStateEvent) {
             IdleStateEvent e = (IdleStateEvent) evt;
-
+            // 客户端不应该设置读超时。客户端不需要知道服务端的状态？
             if (e.state() == IdleState.READER_IDLE) {
-                ctx.close();
-                logger.info(getClass().getName() + "::读超时，关闭连接:" + ctx.channel());
-
+                logger.warn("客户端读超时,关闭连接, channel: {}", ctx.channel());
+//                ctx.close();
             } else if (e.state() == IdleState.WRITER_IDLE) {
+                logger.warn("客户端写超时，发送心跳包给服务端, channel: {}", ctx.channel());
                 ctx.writeAndFlush(ctx.alloc().buffer(1).writeInt(0));
-                if (logger.isDebugEnabled()) {
-                    logger.debug(getClass().getName() + "::写超时，发送心跳包:" + ctx.channel());
-                }
 
             } else if (e.state() == IdleState.ALL_IDLE) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug(getClass().getName() + "::读写都超时，发送心跳包:" + ctx.channel());
-                }
+                logger.warn("客户端 读写都超时,关闭连接, channel: {}", ctx.channel());
             }
         }
+
 
     }
 }
