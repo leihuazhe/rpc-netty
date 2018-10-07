@@ -16,7 +16,9 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.timeout.IdleStateHandler;
+import io.netty.util.concurrent.DefaultPromise;
 import io.netty.util.concurrent.DefaultThreadFactory;
+import io.netty.util.concurrent.Promise;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,62 +37,6 @@ public class NettyClient {
 
     private Bootstrap bootstrap = null;
     private final EventLoopGroup workerGroup = new NioEventLoopGroup(Constants.DEFAULT_IO_THREADS, new DefaultThreadFactory("netty-client-work-group", Boolean.TRUE));
-
-    private static class RequestQueue {
-        private static class AsyncRequestWithTimeout {
-            public AsyncRequestWithTimeout(int seqid, long timeout, CompletableFuture future) {
-                this.seqid = seqid;
-                this.expired = System.currentTimeMillis() + timeout;
-                this.future = future;
-            }
-
-            final long expired;
-            final int seqid;
-            final CompletableFuture<?> future;
-        }
-
-        private static final Map<Integer, CompletableFuture<RpcObject>> FUTURE_CACHES =
-                new ConcurrentHashMap<>();
-        private static final PriorityBlockingQueue<AsyncRequestWithTimeout> FUTURES_CACHES_WITH_TIMEOUT =
-                new PriorityBlockingQueue<>(256,
-                        (o1, o2) -> (int) (o1.expired - o2.expired));
-
-        static void put(int seqId, CompletableFuture<RpcObject> requestFuture) {
-            FUTURE_CACHES.put(seqId, requestFuture);
-        }
-
-        static void putAsync(int seqId, CompletableFuture<RpcObject> requestFuture, long timeout) {
-            FUTURE_CACHES.put(seqId, requestFuture);
-
-            AsyncRequestWithTimeout fwt = new AsyncRequestWithTimeout(seqId, timeout, requestFuture);
-            FUTURES_CACHES_WITH_TIMEOUT.add(fwt);
-        }
-
-        static CompletableFuture<RpcObject> remove(int seqId) {
-            return FUTURE_CACHES.remove(seqId);
-            // remove from prior-queue
-        }
-
-        /**
-         * 一次检查中超过50个请求超时就打印一下日志
-         */
-        static void checkTimeout() {
-            long now = System.currentTimeMillis();
-
-            AsyncRequestWithTimeout fwt = FUTURES_CACHES_WITH_TIMEOUT.peek();
-            while (fwt != null && fwt.expired < now) {
-                CompletableFuture future = fwt.future;
-                if (!future.isDone()) {
-                    future.completeExceptionally(new RpcException("Err-Core-407", "请求服务超时"));
-                }
-
-                FUTURES_CACHES_WITH_TIMEOUT.remove();
-                remove(fwt.seqid);
-
-                fwt = FUTURES_CACHES_WITH_TIMEOUT.peek();
-            }
-        }
-    }
 
     /**
      * init
@@ -164,9 +110,9 @@ public class NettyClient {
     public CompletableFuture<RpcObject> sendAsync(Channel channel, int seqid, RpcObject request, long timeout) throws Exception {
         String reqStr = gson.toJson(request);
         //不打日志吗？
-
-//        Promise<DubboMeshProto.AgentResponse> promise = new DefaultPromise<>();
         CompletableFuture<RpcObject> future = new CompletableFuture<>();
+
+//        Promise<RpcObject> promise = new DefaultPromise<>(executors);
 
 
         RequestQueue.putAsync(seqid, future, timeout);

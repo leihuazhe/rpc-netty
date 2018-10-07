@@ -19,7 +19,6 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 
     private static Logger logger = LoggerFactory.getLogger(ServerHandler.class);
 
-    private final Gson gson = new Gson();
 
 
     @Override
