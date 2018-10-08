@@ -14,6 +14,7 @@
         <module>heartbeat</module>
         <module>commons</module>
         <module>un-pack</module>
+        <module>leak-demo</module>
     </modules>
 
 
