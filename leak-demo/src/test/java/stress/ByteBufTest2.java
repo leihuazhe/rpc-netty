@@ -1,11 +1,12 @@
 package stress;
 
-import com.maple.leak.common.util.DumpUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
 
 import java.nio.charset.Charset;
 
@@ -15,6 +16,9 @@ import java.nio.charset.Charset;
  */
 public class ByteBufTest2 {
     private static final Logger LOGGER = LoggerFactory.getLogger(ByteBufTest2.class);
+
+    @Autowired
+    private ConversionService conversionService;
 
     public static void main(String[] args) {
         String content = "hello world";
