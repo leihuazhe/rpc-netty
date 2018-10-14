@@ -4,7 +4,7 @@ import com.maple.leak.common.DirectMemoryReporter;
 import com.maple.leak.server.NettySimpleServer;
 
 /**
- * desc: AppServer
+ * desc: AppServer leak
  *
  * @author hz.lei
  * @since 2018年08月26日 下午11:48
