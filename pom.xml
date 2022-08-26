@@ -4,111 +4,24 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.maple</groupId>
-    <artifactId>rpc-netty</artifactId>
+    <parent>
+        <groupId>com.maple.nebula</groupId>
+        <artifactId>nebula-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
     <packaging>pom</packaging>
-    <version>1.0</version>
-
+    <artifactId>nebula-netty</artifactId>
     <modules>
-        <module>netty-rpc</module>
-        <module>heartbeat</module>
-        <module>commons</module>
-        <module>un-pack</module>
-        <module>leak-demo</module>
+        <module>rpc-netty</module>
     </modules>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>2.8.1</version>
+        </dependency>
+    </dependencies>
 
-    <properties>
-        <java.version>1.8</java.version>
-        <spring.version>4.3.5.RELEASE</spring.version>
-        <spring-security.version>4.2.1.RELEASE</spring-security.version>
-        <com.fasterxml.jackson.version>2.6.3</com.fasterxml.jackson.version>
-        <logback-version>1.1.3</logback-version>
-        <org.slf4j-version>1.7.25</org.slf4j-version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <scala.version>2.12.4</scala.version>
-    </properties>
-
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-all</artifactId>
-                <version>4.1.42.Final</version>
-            </dependency>
-
-            <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
-            <dependency>
-                <groupId>com.google.code.gson</groupId>
-                <artifactId>gson</artifactId>
-                <version>2.8.9</version>
-            </dependency>
-
-
-            <!--proto buf-->
-            <dependency>
-                <groupId>com.google.protobuf</groupId>
-                <artifactId>protobuf-java</artifactId>
-                <version>3.16.1</version>
-            </dependency>
-
-
-            <!-- log 日志管理  -->
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-classic</artifactId>
-                <version>1.2.0</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-api</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-core</artifactId>
-                <version>1.2.9</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-api</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.janino</groupId>
-                <artifactId>janino</artifactId>
-                <version>2.7.8</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${org.slf4j-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.logback-extensions</groupId>
-                <artifactId>logback-ext-spring</artifactId>
-                <version>0.1.4</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>ch.qos.logback</groupId>
-                        <artifactId>logback-core</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>ch.qos.logback</groupId>
-                        <artifactId>logback-classic</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <!-- transfer common logging to slf4j ?-->
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>jcl-over-slf4j</artifactId>
-                <version>1.7.25</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
 </project>
