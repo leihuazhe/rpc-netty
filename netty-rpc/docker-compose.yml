@@ -1,0 +1,12 @@
+version: "3"
+services:
+  nebula-server:
+    image: maple.io/nebula-server:1.0
+    container_name: nebula-server
+    ports:
+      - 8000:8000
+    volumes:
+      - ./logs:/logs
+    environment:
+      - TZ=Asia/Shanghai
+    restart: always

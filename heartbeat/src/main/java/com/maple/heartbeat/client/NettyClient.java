@@ -122,7 +122,7 @@ public class NettyClient {
         return future;
     }
 
-    private RpcClientHandler.CallBack callBack = msg -> {
+    private final RpcClientHandler.CallBack callBack = msg -> {
         CompletableFuture<RpcObject> future = RequestQueue.remove(msg.getSeqId());
         if (future != null) {
             future.complete(msg);

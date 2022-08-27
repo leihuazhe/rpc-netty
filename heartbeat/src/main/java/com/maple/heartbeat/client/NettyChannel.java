@@ -1,5 +1,9 @@
 package com.maple.heartbeat.client;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.Date;
 
 /**
@@ -8,33 +12,12 @@ import java.util.Date;
  * @author hz.lei
  * @date 2018年04月18日 上午12:28
  */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class NettyChannel {
-    private String name;
 
+  private String name;
 
-    private Date createDate;
-
-
-    public NettyChannel(String name, Date createDate) {
-        this.name = name;
-        this.createDate = createDate;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-
-    public Date getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
-    }
+  private Date createDate;
 }

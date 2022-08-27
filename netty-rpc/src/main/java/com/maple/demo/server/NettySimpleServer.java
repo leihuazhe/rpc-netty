@@ -42,7 +42,6 @@ public class NettySimpleServer {
         try {
             ServerBootstrap bootstrap = new ServerBootstrap();
 
-
             bootstrap
                     .group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)

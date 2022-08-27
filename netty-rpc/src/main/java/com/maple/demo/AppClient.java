@@ -67,9 +67,11 @@ public class AppClient {
         }
     }
 
+    //private static final String IP_ADDRESS = "127.0.0.1";
+    private static final String IP_ADDRESS = "43.143.43.222";
 
     public static void main(String[] args) {
-        AppClient client = new AppClient("127.0.0.1", 8000);
+        AppClient client = new AppClient(IP_ADDRESS, 8000);
         logger.info("请输入内容:\n");
         while (true) {
             try {
